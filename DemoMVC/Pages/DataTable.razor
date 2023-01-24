@@ -1,0 +1,52 @@
+﻿@page "/table"
+@using DemoMVC.Models;
+@using DemoMVC.Services;
+@using DemoMVC.Pages.DataTableComponents;
+@inject IBookService _bookService;
+
+<PageTitle>DemoMVC Table</PageTitle>
+
+<h1>Table</h1>
+
+<div class="d-flex flex-grow-1">
+    <div class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
+    @if(books != null)
+    {
+        <BookForm SubmitCallback="@LoadData" />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in books)
+                {
+                    <DataTableRow BookModel="@book" />
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <Spinner/>
+    }
+    </div>
+</div>
+
+@code {
+    private List<Book>? books = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    public async Task LoadData()
+    {
+        books = await _bookService.GetBooksAsync();
+    }
+}
